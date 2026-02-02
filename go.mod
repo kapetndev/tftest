@@ -4,6 +4,7 @@ go 1.24.0
 
 require (
 	github.com/google/go-cmp v0.7.0
+	github.com/hashicorp/hc-install v0.9.3
 	github.com/hashicorp/terraform-exec v0.25.0
 	github.com/hashicorp/terraform-json v0.27.2
 )
