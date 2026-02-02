@@ -1,4 +1,4 @@
-# tftest
+# tftest [![test](https://github.com/kapetndev/tftest/actions/workflows/test.yaml/badge.svg?event=push)](https://github.com/kapetndev/tftest/actions/workflows/test.yaml)
 
 A concurrent Terraform module testing tool that validates module structure,
 formatting, configuration validity, and linting across your entire repository.
