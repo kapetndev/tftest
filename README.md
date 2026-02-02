@@ -105,6 +105,84 @@ tftest -r -v -f prettyjson -o results.json ./modules
 Use `tftest` in your CI/CD workflows with the [dedicated
 action](https://github.com/kapetndev/tftest-action).
 
+## Signing
+
+The binaries on the [releases
+page](https://github.com/kapetndev/tftest/releases) are signed with the signing
+key `49F7948E9BD5370F9F2B68B572CEA43B14FC7612`.
+
+### Public Key
+
+```text
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mDMEaYipHxYJKwYBBAHaRw8BAQdA/l8/Ex2YIZni68fieEvQpluv/DxsamZzjbWC
+H7fotui0PUthcGV0biBTaWduaW5nIChDb2RlIHNpZ25pbmcgZm9yIGthcGV0bikg
+PHNpZ25pbmdAa2FwZXRuLmRldj6ImQQTFgoAQRYhBEn3lI6b1TcPnytotXLOpDsU
+/HYSBQJpiKkfAhsDBQkJNToABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJ
+EHLOpDsU/HYSVPcBAKmon0iQ0tzByes2jA49GPkBYiJ0FZIz8pq7JRDjEqFYAQDY
+aP6/+H4ndK1REOtPuyCnlmxPVSW5Wk/oQATJt4m+Brg4BGmIqR8SCisGAQQBl1UB
+BQEBB0D067Q4E9MidLnOSJb9IYQ7InHvUG/TkZyP9CEbO6qrYQMBCAeIfgQYFgoA
+JhYhBEn3lI6b1TcPnytotXLOpDsU/HYSBQJpiKkfAhsMBQkJNToAAAoJEHLOpDsU
+/HYSVwYBAL6lXcNMhmDInuQYE5RsQa43D7vu25Bc7H2SiexsW5tdAP9xi6mWEVP0
+vzHROcMpkAyC3GkBmn8FMxvvuYhwEB59Dw==
+=pWQI
+-----END PGP PUBLIC KEY BLOCK-----
+```
+
+### Verifying Binaries
+
+1. Import the signing key:
+
+   ```bash
+   gpg --keyserver keyserver.ubuntu.com --recv-keys 49F7948E9BD5370F9F2B68B572CEA43B14FC7612
+   ```
+
+1. Verify that the key has been imported:
+
+   ```bash
+   gpg --list-keys signing@kapetn.dev
+   ```
+
+   Check the output is:
+
+   ```bash
+   pub   ed25519 2026-02-08 [SC] [expires: 2031-01-01]
+         49F7948E9BD5370F9F2B68B572CEA43B14FC7612
+   ```
+
+1. Download the binary and its corresponding shasums and signature from the
+   [releases page](/releases).
+
+1. Verify the signature of the shasums file:
+
+   ```bash
+   gpg --verify tftest_x.y.z_SHA256SUMS.sig tftest_x.y.z_SHA256SUMS
+   ```
+
+   This should give you a similar output to that below:
+
+<!-- pyml disable md013 -->
+   ```bash
+   gpg: Signature made Sun Feb  8 15:30:24 2026 GMT
+   gpg:                using EDDSA key 49F7948E9BD5370F9F2B68B572CEA43B14FC7612
+   gpg:                issuer "signing@kapetn.dev"
+   gpg: Good signature from "Kapetn Signing (Code signing for kapetn) <signing@kapetn.dev>" [ultimate]
+   ```
+<!-- pyml enable md013 -->
+
+1. Verify the shasum of the binary matches the value in the shasums file:
+
+   ```bash
+   sha256sum -c --ignore-missing tftest_x.y.z_SHA256SUMS
+   ```
+
+   This should give you a similar output to that below:
+
+   ```bash
+   tftest_x.y.z_linux_amd64.tar.gz: OK
+   ```
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).

@@ -1,0 +1,94 @@
+---
+version: 2
+archives:
+- formats:
+  - tar.gz
+  name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+before:
+  hooks:
+  - go mod download
+builds:
+- binary: "{{ .ProjectName }}_v{{ .Version }}"
+  env:
+  # goreleaser does not work with CGO, it could also complicate usage by users
+  # in CI/CD systems where they may be unable to install libraries.
+  - CGO_ENABLED=0
+  flags:
+  - -trimpath
+  ldflags:
+  - -s -w -X {{ .ModulePath }}/internal/cmd.version={{ .Version }} -X {{ .ModulePath }}/internal/cmd.commit={{ .Commit }}
+  goarch:
+  - "386"
+  - amd64
+  - arm
+  - arm64
+  goos:
+  - darwin
+  - freebsd
+  - linux
+  - windows
+  ignore:
+  - goarch: "386"
+    goos: darwin
+  - goarch: arm
+    goos: windows
+  main: cmd/tftest/main.go
+  mod_timestamp: "{{ .CommitTimestamp }}"
+changelog:
+  disable: true
+checksum:
+  algorithm: sha256
+  name_template: "{{ .ProjectName }}_{{ .Version }}_SHA256SUMS"
+dockers:
+- image_templates:
+  - ghcr.io/kapetndev/{{ .ProjectName }}:{{ .Version }}-amd64
+  - ghcr.io/kapetndev/{{ .ProjectName }}:latest-amd64
+  use: buildx
+  dockerfile: Dockerfile.goreleaser
+  build_flag_templates:
+  - --platform=linux/amd64
+  - --label=org.opencontainers.image.title={{ .ProjectName }}
+  - --label=org.opencontainers.image.description=Terraform testing tool
+  - --label=org.opencontainers.image.url=https://github.com/kapetndev/tftest
+  - --label=org.opencontainers.image.source=https://github.com/kapetndev/tftest
+  - --label=org.opencontainers.image.version={{ .Version }}
+  - --label=org.opencontainers.image.created={{ .Date }}
+  - --label=org.opencontainers.image.revision={{ .FullCommit }}
+  - --label=org.opencontainers.image.licenses=MIT
+- image_templates:
+  - ghcr.io/kapetndev/{{ .ProjectName }}:{{ .Version }}-arm64
+  - ghcr.io/kapetndev/{{ .ProjectName }}:latest-arm64
+  use: buildx
+  goarch: arm64
+  dockerfile: Dockerfile.goreleaser
+  build_flag_templates:
+  - --platform=linux/arm64
+  - --label=org.opencontainers.image.title={{ .ProjectName }}
+  - --label=org.opencontainers.image.description=Terraform testing tool
+  - --label=org.opencontainers.image.url=https://github.com/kapetndev/tftest
+  - --label=org.opencontainers.image.source=https://github.com/kapetndev/tftest
+  - --label=org.opencontainers.image.version={{ .Version }}
+  - --label=org.opencontainers.image.created={{ .Date }}
+  - --label=org.opencontainers.image.revision={{ .FullCommit }}
+  - --label=org.opencontainers.image.licenses=MIT
+docker_manifests:
+- name_template: ghcr.io/kapetndev/{{ .ProjectName }}:{{ .Version }}
+  image_templates:
+  - ghcr.io/kapetndev/{{ .ProjectName }}:{{ .Version }}-amd64
+  - ghcr.io/kapetndev/{{ .ProjectName }}:{{ .Version }}-arm64
+- name_template: ghcr.io/kapetndev/{{ .ProjectName }}:latest
+  image_templates:
+  - ghcr.io/kapetndev/{{ .ProjectName }}:latest-amd64
+  - ghcr.io/kapetndev/{{ .ProjectName }}:latest-arm64
+signs:
+- artifacts: checksum
+  args:
+  # The `batch` flag must be specified to indicate signing should be
+  # non-interactive.
+  - --batch
+  - --local-user
+  - "{{ .Env.GPG_FINGERPRINT }}"
+  - --output
+  - ${signature}
+  - --detach-sign
+  - ${artifact}

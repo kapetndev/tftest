@@ -1,0 +1,7 @@
+FROM gcr.io/distroless/static-debian12:nonroot
+
+COPY --chmod=755 tftest_* /usr/local/bin/tftest
+
+USER nonroot:nonroot
+
+ENTRYPOINT ["/usr/local/bin/tftest"]
