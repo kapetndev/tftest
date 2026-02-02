@@ -1,0 +1,19 @@
+---
+name: publish
+on:
+  push:
+    tags:
+    - v*
+permissions:
+  contents: write
+  packages: write
+jobs:
+  goreleaser:
+    uses: kapetndev/shared-workflows/.github/workflows/goreleaser.yaml@v1
+    with:
+      container-registry: ghcr.io
+      container-username: ${{ github.actor }}
+    secrets:
+      CONTAINER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
