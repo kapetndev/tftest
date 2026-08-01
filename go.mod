@@ -7,7 +7,7 @@ require (
 	github.com/hashicorp/go-version v1.9.0
 	github.com/hashicorp/hc-install v0.9.5
 	github.com/hashicorp/terraform-exec v0.25.2
-	github.com/hashicorp/terraform-json v0.27.2
+	github.com/hashicorp/terraform-json v0.28.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
 	github.com/tomasbasham/cli-runtime v0.0.0-20260227011113-83d23330b0d3
